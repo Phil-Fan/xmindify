@@ -1,0 +1,17 @@
+# Pre-commit cache
+.pre-commit-hooks/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak

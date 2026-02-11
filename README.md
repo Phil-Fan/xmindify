@@ -1,0 +1,58 @@
+# XMindify Skills
+
+## Quick Start
+
+### 1. 安装 XMindMark CLI
+
+```bash
+pnpm install -g xmindmark
+```
+
+或从源码安装：
+
+```bash
+git clone https://github.com/xmindltd/xmindmark.git
+cd xmindmark
+pnpm install
+pnpm run build
+pnpm link
+```
+
+### 2. 安装 Skill
+
+将此 skill 目录添加到你的 Claude Code skills 目录：
+
+全局安装
+
+```bash
+cd xmindify
+cp -r .claude/skills/xmindify ~/.claude/skills/
+claude
+```
+
+项目安装
+
+```bash
+cd xmindify
+claude
+```
+
+## 场景模板
+
+| 场景 | 说明 | 触发关键词 |
+|------|------|-----------|
+| [论文阅读](scenarios/paper.md) | 学术论文结构化分析 | 论文、学术、research |
+| [内容总结](scenarios/summary.md) | 长篇内容要点提炼 | 总结、提炼、梳理 |
+| [头脑风暴](scenarios/brainstorm.md) | 创意构思与发散思维 | 头脑风暴、创意、方案 |
+| [问题分析](scenarios/analysis.md) | 问题根因与方案决策 | 分析、问题、决策 |
+| [项目规划](scenarios/project.md) | 项目计划与任务分解 | 项目、计划、roadmap |
+
+## 依赖
+
+- [xmindmark](https://github.com/xmindltd/xmindmark) - XMindMark CLI 工具
+- [Claude Code](https://claude.ai/code) - Anthropic 的 AI 编程助手
+- [learning_research](https://github.com/pengsida/learning_research/tree/master) 中彭思达老师讲的论文解析树
+
+## 许可证
+
+MIT License - 详见 [LICENSE](LICENSE)

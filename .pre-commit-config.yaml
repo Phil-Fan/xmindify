@@ -1,0 +1,42 @@
+# Pre-commit hooks for xmindify skills
+
+repos:
+  # General pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: |
+          (?x)^(
+            scenarios/.*\.md
+          )$
+      - id: end-of-file-fixer
+      - id: check-yaml
+        files: ^.github/workflows/.*\.yml$
+      - id: check-added-large-files
+        args: ['--maxkb=100']
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Markdown linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix', '--ignore', 'scenarios/*.md']
+        exclude: |
+          (?x)^(
+            node_modules/|
+            .git/
+          )
+
+  # Shell script linting
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.9.0.6
+    hooks:
+      - id: shellcheck
+        args: ['--severity=warning']
+        files: scripts/.*\.sh$
