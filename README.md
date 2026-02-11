@@ -12,6 +12,10 @@ A skill that can automatically generate mind maps in different scenarios with re
 
 ![](assets/thesis-example.png)
 
+Claude Code 截图
+
+![](assets/cc.png)
+
 ## Quick Start
 
 ### 1. 安装 XMindMark CLI
