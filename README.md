@@ -1,5 +1,17 @@
 # XMindify Skills
 
+A skill that can automatically generate mind maps in different scenarios with respect to .xmind syntax
+
+## Demo
+
+论文解析树
+
+![](assets/thesis.png)
+
+论文解析案例 - 以一篇论文为例
+
+![](assets/thesis-example.png)
+
 ## Quick Start
 
 ### 1. 安装 XMindMark CLI
