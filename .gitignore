@@ -17,3 +17,6 @@ Thumbs.db
 *.bak
 
 playground
+
+node_modules/
+.wrangler/

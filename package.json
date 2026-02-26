@@ -1,0 +1,39 @@
+{
+  "name": "xmindify-mcp",
+  "version": "1.0.0",
+  "description": "XMind mind map MCP server with interactive UI, deployable to Cloudflare Workers",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "vite build --config vite.config.ts && node scripts/update-html.js",
+    "build:watch": "vite build --config vite.config.ts --watch",
+    "deploy": "pnpm run build && wrangler deploy",
+    "serve": "tsx watch src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "xmind",
+    "mindmap",
+    "cloudflare",
+    "workers"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "^1.1.0",
+    "@modelcontextprotocol/sdk": "^1.27.0",
+    "hono": "^4.6.0",
+    "xmind-embed-viewer": "^1.2.0",
+    "xmindmark": "^0.3.2",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+      "@cloudflare/workers-types": "^4.20250521.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-plugin-singlefile": "^2.3.0",
+    "wrangler": "^3.107.0"
+  }
+}

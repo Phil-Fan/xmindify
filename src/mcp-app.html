@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XMindify - MCP App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+      overflow: hidden;
+      background: var(--color-background-primary, #f8f9fa);
+    }
+
+    #app {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--color-background-secondary, #ffffff);
+      border-bottom: 1px solid var(--color-border-default, #e1e4e8);
+      min-height: 52px;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary, #24292f);
+      font-family: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+    }
+
+    .header .controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header button {
+      padding: 6px 12px;
+      font-size: 13px;
+      border: 1px solid var(--color-border-default, #e1e4e8);
+      background: var(--color-background-primary, #f8f9fa);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--color-text-primary, #24292f);
+      transition: all 0.15s;
+    }
+
+    .header button:hover {
+      background: var(--color-background-tertiary, #f0f2f5);
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .editor-panel {
+      width: 350px;
+      border-right: 1px solid var(--color-border-default, #e1e4e8);
+      display: flex;
+      flex-direction: column;
+      background: var(--color-background-secondary, #ffffff);
+    }
+
+    .editor-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border-default, #e1e4e8);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary, #57606a);
+    }
+
+    .editor-textarea {
+      flex: 1;
+      border: none;
+      padding: 16px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+      background: transparent;
+      color: var(--color-text-primary, #24292f);
+    }
+
+    .viewer-panel {
+      flex: 1;
+      position: relative;
+      background: var(--color-background-primary, #f8f9fa);
+    }
+
+    #viewer-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    .status {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      padding: 6px 12px;
+      font-size: 12px;
+      background: var(--color-background-secondary, #ffffff);
+      border: 1px solid var(--color-border-default, #e1e4e8);
+      border-radius: 4px;
+      color: var(--color-text-secondary, #57606a);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .status.show {
+      opacity: 1;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--color-text-secondary, #57606a);
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--color-border-default, #e1e4e8);
+      border-top-color: var(--color-accent-primary, #0969da);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 20px;
+      background: var(--color-background-secondary, #ffffff);
+      border: 1px solid var(--color-danger-default, #cf222e);
+      border-radius: 8px;
+      color: var(--color-danger-default, #cf222e);
+      font-size: 14px;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .zoom-controls button {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-border-default, #e1e4e8);
+      background: var(--color-background-secondary, #ffffff);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--color-text-primary, #24292f);
+      font-size: 18px;
+    }
+
+    .zoom-controls button:hover {
+      background: var(--color-background-tertiary, #f0f2f5);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h1>XMindify</h1>
+      <div class="controls">
+        <button id="export-btn" title="导出为 XMind 文件">导出</button>
+        <button id="fit-btn" title="适应窗口">适应</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="editor-panel">
+        <div class="editor-header">XMindMark 编辑器</div>
+        <textarea id="editor" class="editor-textarea" placeholder="输入 XMindMark 格式的思维导图...&#10;&#10;中心主题&#10;&#10;- 主分支1&#10;    * 子分支1.1&#10;    * 子分支1.2&#10;- 主分支2"></textarea>
+      </div>
+
+      <div class="viewer-panel">
+        <div id="viewer-container"></div>
+        <div id="loading" class="loading" style="display: none;">
+          <div class="loading-spinner"></div>
+          <span>加载中...</span>
+        </div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div class="zoom-controls">
+          <button id="zoom-fit" title="适应">⊡</button>
+        </div>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./mcp-app.ts"></script>
+</body>
+</html>

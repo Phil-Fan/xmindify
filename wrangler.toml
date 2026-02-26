@@ -1,0 +1,16 @@
+name = "xmindify-mcp"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+REGION = "cn"
+
+# Build configuration
+[build]
+command = "pnpm run build"
+
+# Development configuration
+[dev]
+port = 8787
+local_protocol = "http"
