@@ -1,35 +1,35 @@
-# XMindify MCP
+# XMindify
+ 
+MCP-APP server for Xmind, and a skill that can automatically generate mind maps in different scenarios with respect to .xmind syntax. 
+
+## Demo
+
+- MCP-APP 使用案例
+
+https://github.com/user-attachments/assets/9a7462d6-f544-496d-ab9d-8871c37c1a61
+
+- 在[poco-agent](https://github.com/poco-ai/poco-agent)当中的使用案例
+
+https://github.com/user-attachments/assets/a0e00a71-cde1-4ba7-bdb8-ada740e70701
+
+- 论文解析树
+
+![](assets/thesis.png)
+
+- 论文解析案例 - 以一篇论文为例
+
+![](assets/thesis-example.png)
+
+- Claude Code 截图
+
+![](assets/cc.png)
+
 
 XMind 思维导图 MCP 服务器，支持可视化创建和编辑思维导图，可部署到 Cloudflare Workers。
 
-## 快速开始
+## MCP Quick Start
 
-### 安装依赖
-
-```bash
-pnpm install
-```
-
-### 本地开发
-
-```bash
-# 构建 UI 资源
-pnpm run build
-
-# 启动开发服务器
-pnpm run dev
-```
-
-访问 http://localhost:8787/mcp
-
-### 部署到 Cloudflare
-
-```bash
-# 构建并部署
-pnpm run deploy
-```
-
-## MCP 工具
+### MCP 工具
 
 | 工具 | 功能 |
 |------|------|
@@ -39,40 +39,7 @@ pnpm run deploy
 | `export_to_xmind` | 导出为 XMind 二进制文件 |
 | `set_zoom` | 设置查看器缩放级别 |
 
-## XMindMark 语法示例
-
-```
-中心主题
-
-- 主分支1
-    * 子分支1.1
-    * 子分支1.2 [B]
-- 主分支2 [^1](关联说明)
-```
-
-更多语法请调用 `read_me` 工具查看。
-
----
-
-# XMindify Skills
-
-A skill that can automatically generate mind maps in different scenarios with respect to .xmind syntax
-
-## Demo
-
-论文解析树
-
-![](assets/thesis.png)
-
-论文解析案例 - 以一篇论文为例
-
-![](assets/thesis-example.png)
-
-Claude Code 截图
-
-![](assets/cc.png)
-
-## Quick Start
+## Skill Quick Start
 
 ### 1. 安装 XMindMark CLI
 
