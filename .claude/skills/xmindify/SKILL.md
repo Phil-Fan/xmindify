@@ -37,16 +37,15 @@ compatibility: requires xmindmark CLI (install via pnpm install -g xmindmark)
 
 ## XMindMark 转换命令
 
-执行前先检查 xmindmark CLI 是否已安装：
+使用 npm 或 pnpm 安装 Xmindmark CLI： `npm install -g xmindmark`
+
+检查 Xmindmark CLI 是否已安装：
 
 ```bash
 xmindmark --version
 ```
 
-如果未安装，使用 npm 或 pnpm 安装：
-
-- npm: `npm install -g xmindmark`
-- pnpm: `pnpm install -g xmindmark`
+如果已经安装，使用下面的脚本转换并导出为 XMind 和 SVG 格式：
 
 ```bash
 # 转换为 XMind 文件
