@@ -6,26 +6,14 @@ compatibility: requires xmindmark CLI (install via pnpm install -g xmindmark)
 
 # XMindify 思维导图生成器
 
-## 前置检查
-
-执行前先检查 xmindmark CLI 是否已安装：
-
-```bash
-xmindmark --version
-```
-
-如果未安装，提醒用户运行：
-
-```bash
-npm install -g xmindmark
-```
-
-```bash
-pnpm install -g xmindmark
-```
-
-
 ## 工作流程
+
+### 执行步骤
+
+1. **确定场景** - 根据用户意图选择预设模板或自动生成
+2. **生成 XMindMark** - 严格按照 [SYNTAX.md](references/SYNTAX.md) 语法创建 `.xmindmark` 文件
+3. **语法检查** - 检查 XMindMark 文件是否符合语法规范，不规范要修改直到规范为止
+4. **转换导出** - 使用 CLI 转换为 XMind 和 SVG
 
 ### 场景路由
 
@@ -40,50 +28,44 @@ pnpm install -g xmindmark
 | 项目规划 | [project.md](scenarios/project.md) | 项目、计划、规划、roadmap |
 | 无特定场景 | 自动生成 | 根据内容智能推断 |
 
-### 执行步骤
-
-1. **确定场景** - 根据用户意图选择预设模板或自动生成
-2. **生成 XMindMark** - 按 [SYNTAX.md](references/SYNTAX.md) 语法创建 `.xmindmark` 文件
-3. **转换导出** - 使用 CLI 转换为 XMind 和 SVG
-
-## XMindMark 转换命令
-
-```bash
-# 转换为 XMind 文件
-xmindmark -f xmind -o output topic.xmindmark
-
-# 转换为 SVG 图片
-xmindmark -f svg -o output topic.xmindmark
-```
-
-或使用转换脚本：
-
-```bash
-./scripts/convert.sh topic.xmindmark output/
-```
-
-## 场景模板使用
-
-每个场景模板包含：
-
-- 结构框架（中心主题、主分支层级）
-- 常用模式（边界、关联、总结的使用）
-- 示例用法
-
-## 语法参考
-
-查看 [SYNTAX.md](references/SYNTAX.md) 了解完整语法。
-
-## 自动生成模式
-
 当用户需求不匹配预设场景时：
 
 1. **提取中心主题** - 从用户输入中识别核心话题
 2. **分析内容结构** - 识别关键维度和层次关系
 3. **智能组织** - 根据内容类型自动选择最佳组织方式（时间、类别、优先级等）
-4. **添加视觉元素** - 适当使用边界分组���关联连接、总结节点
+4. **添加视觉元素** - 适当使用边界分组、关联连接、总结节点
+
+## XMindMark 转换命令
+
+执行前先检查 xmindmark CLI 是否已安装：
+
+```bash
+xmindmark --version
+```
+
+如果未安装，使用 npm 或 pnpm 安装：
+
+- npm: `npm install -g xmindmark`
+- pnpm: `pnpm install -g xmindmark`
+
+```bash
+# 转换为 XMind 文件
+xmindmark -f xmind topic.xmindmark
+
+# 转换为 SVG 图片
+xmindmark -f svg topic.xmindmark
+```
+
+- 可以使用 `-o` 参数指定输出目录
 
 ## 全局规则
+
+1. **遵守语法规范** - 必须严格遵守 [SYNTAX.md](references/SYNTAX.md) 语法规范，生成前后都需要进行检查，不规范要修改直到规范为止
+2. **简洁优先** - 思维导图用于提炼要点，不是复制全文
+3. **层次清晰** - 中心主题 → 主分支 → 子分支 → 细节
+4. **逻辑分组** - 使用边界 `[B]` 将相关概念归类
+5. **关键连接** - 仅用 1-2 个关联标记最核心的逻辑关系
+6. **总结提炼** - 使用 `[S]` 汇总关键结论或局限性
 
 ### 关联 (Relationship) 使用限制
 
@@ -106,14 +88,7 @@ xmindmark -f svg -o output topic.xmindmark
 
 ### 语法规范
 
+- 必须严格遵守 [SYNTAX.md](references/SYNTAX.md) 语法规范，生成前后都需要进行检查，不规范要修改直到规范为止
 - 1 Tab = 4 空格
 - `[]` 标记后不能有空格（在主题内容后）
 - 同级子主题之间的空行会被忽略
-
-## 最佳实践
-
-1. **简洁优先** - 思维导图用于提炼要点，不是复制全文
-2. **层次清晰** - 中心主题 → 主分支 → 子分支 → 细节
-3. **逻辑分组** - 使用边界 `[B]` 将相关概念归类
-4. **关键连接** - 仅用 1-2 个关联标记最核心的逻辑关系
-5. **总结提炼** - 使用 `[S]` 汇总关键结论或局限性
