@@ -40,6 +40,11 @@ app.use(
 
 // MCP 端点路径
 const MCP_PATH = '/mcp';
+const APP_RESOURCE_URI = 'ui://xmindify/mcp-app.html';
+const APP_UI_CSP = {
+  frameDomains: ['https://www.xmind.app'],
+  resourceDomains: ['https://www.xmind.app', 'https://assets.xmind.net'],
+};
 
 /**
  * 创建 MCP 服务器实例
@@ -54,14 +59,12 @@ function createMCPServer() {
   registerAppResource(
     server,
     'XMindify UI',
-    'ui://xmindify/mcp-app.html',
+    APP_RESOURCE_URI,
     {
       description: 'Interactive XMind mind map editor and viewer',
       _meta: {
         ui: {
-          csp: {
-            frameDomains: ['https://www.xmind.app'],
-          },
+          csp: APP_UI_CSP,
         },
       },
     },
@@ -69,14 +72,12 @@ function createMCPServer() {
       return {
         contents: [
           {
-            uri: 'ui://xmindify/mcp-app.html',
+            uri: APP_RESOURCE_URI,
             mimeType: RESOURCE_MIME_TYPE,
             text: HTML_RESOURCE,
             _meta: {
               ui: {
-                csp: {
-                  frameDomains: ['https://www.xmind.app'],
-                },
+                csp: APP_UI_CSP,
               },
             },
           },
@@ -124,7 +125,7 @@ function createMCPServer() {
       },
       _meta: {
         ui: {
-          resourceUri: 'ui://xmindify/mcp-app.html',
+          resourceUri: APP_RESOURCE_URI,
         },
       },
     },

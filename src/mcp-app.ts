@@ -290,6 +290,18 @@ ${nodeSvg}
 </svg>`;
 }
 
+function extractXMindMarkFromToolResult(result: any): string {
+  const structured = result?.structuredContent;
+  if (structured && typeof structured.xmindmark === 'string') {
+    return structured.xmindmark;
+  }
+
+  const textContent = Array.isArray(result?.content)
+    ? result.content.find((item: any) => item?.type === 'text' && typeof item?.text === 'string')?.text
+    : '';
+  return typeof textContent === 'string' ? textContent : '';
+}
+
 async function renderFromXMindMark(xmindmarkText: string): Promise<void> {
   if (!viewer) {
     return;
@@ -344,8 +356,14 @@ async function initMCPApp(): Promise<void> {
     await renderFromXMindMark(xmindmarkText);
   };
 
-  app.ontoolresult = async () => {
-    // create_view 的核心数据在 tool input 中，这里无需重复处理
+  app.ontoolresult = async (result) => {
+    const xmindmarkText = extractXMindMarkFromToolResult(result);
+    if (!xmindmarkText) {
+      return;
+    }
+
+    editor.value = xmindmarkText;
+    await renderFromXMindMark(xmindmarkText);
   };
 
   app.onteardown = async () => {
