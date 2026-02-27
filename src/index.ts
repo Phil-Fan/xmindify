@@ -41,13 +41,6 @@ app.use(
 // MCP 端点路径
 const MCP_PATH = '/mcp';
 
-type SessionEntry = {
-  server: McpServer;
-  transport: WebStandardStreamableHTTPServerTransport;
-};
-
-const sessions = new Map<string, SessionEntry>();
-
 /**
  * 创建 MCP 服务器实例
  */
@@ -67,7 +60,7 @@ function createMCPServer() {
       _meta: {
         ui: {
           csp: {
-            frameDomains: ['https://www.xmind.app', 'https://www.xmind.cn'],
+            frameDomains: ['https://www.xmind.app'],
           },
         },
       },
@@ -79,6 +72,13 @@ function createMCPServer() {
             uri: 'ui://xmindify/mcp-app.html',
             mimeType: RESOURCE_MIME_TYPE,
             text: HTML_RESOURCE,
+            _meta: {
+              ui: {
+                csp: {
+                  frameDomains: ['https://www.xmind.app'],
+                },
+              },
+            },
           },
         ],
       };
@@ -192,77 +192,7 @@ function createMCPServer() {
     }
   );
 
-  // 注册 set_zoom 工具 (仅 UI 可见)
-  registerAppTool(
-    server,
-    'set_zoom',
-    {
-      description: '设置查看器缩放级别',
-      _meta: {
-        ui: {
-          visibility: ['app'],
-        },
-      },
-    },
-    async (args: any) => {
-      const { zoom } = args;
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({ zoom }),
-          },
-        ],
-      };
-    }
-  );
-
   return server;
-}
-
-function isInitializeRequest(body: unknown): boolean {
-  if (!body || typeof body !== 'object') {
-    return false;
-  }
-
-  const message = body as { method?: unknown };
-  return message.method === 'initialize';
-}
-
-async function resolveTransport(
-  request: Request,
-  parsedBody: unknown
-): Promise<WebStandardStreamableHTTPServerTransport | Response> {
-  const sessionId = request.headers.get('mcp-session-id');
-
-  if (sessionId) {
-    const existingSession = sessions.get(sessionId);
-    if (!existingSession) {
-      return new Response('Invalid or missing session ID', { status: 400 });
-    }
-    return existingSession.transport;
-  }
-
-  if (request.method !== 'POST' || !isInitializeRequest(parsedBody)) {
-    return new Response('Bad Request: No valid session ID provided', { status: 400 });
-  }
-
-  const server = createMCPServer();
-  let transport!: WebStandardStreamableHTTPServerTransport;
-  transport = new WebStandardStreamableHTTPServerTransport({
-    sessionIdGenerator: () => crypto.randomUUID(),
-    enableJsonResponse: true,
-    onsessioninitialized: (newSessionId) => {
-      sessions.set(newSessionId, { server, transport });
-    },
-    onsessionclosed: (closedSessionId) => {
-      sessions.delete(closedSessionId);
-    },
-  });
-
-  await server.connect(transport);
-
-  return transport;
 }
 
 /**
@@ -270,18 +200,46 @@ async function resolveTransport(
  */
 app.all(MCP_PATH, async (c) => {
   const rawRequest = c.req.raw;
-  const contentType = c.req.header('content-type') || '';
-  const parsedBody =
-    rawRequest.method === 'POST' && contentType.includes('application/json')
-      ? await c.req.json().catch(() => ({}))
-      : undefined;
+  const server = createMCPServer();
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: true,
+  });
+  await server.connect(transport);
 
-  const resolved = await resolveTransport(rawRequest, parsedBody);
-  if (resolved instanceof Response) {
-    return resolved;
+  const headers = new Headers(rawRequest.headers);
+  if (headers.has('mcp-protocol-version')) {
+    // 兼容当前 Cloudflare runtime + SDK 组合：该头会导致 transport 返回 500
+    headers.delete('mcp-protocol-version');
   }
 
-  return resolved.handleRequest(rawRequest, { parsedBody });
+  const method = rawRequest.method.toUpperCase();
+  const bodyText =
+    method === 'GET' || method === 'HEAD'
+      ? undefined
+      : await rawRequest.text();
+
+  if (method === 'POST' && bodyText) {
+    try {
+      const payload = JSON.parse(bodyText) as { method?: unknown; id?: unknown };
+      if (
+        typeof payload.method === 'string' &&
+        payload.method.startsWith('notifications/') &&
+        payload.id === undefined
+      ) {
+        return new Response(null, { status: 202 });
+      }
+    } catch {
+      // ignore invalid JSON here and let transport return protocol error
+    }
+  }
+
+  const requestForTransport = new Request(rawRequest.url, {
+    method: rawRequest.method,
+    headers,
+    body: bodyText && bodyText.length > 0 ? bodyText : undefined,
+  });
+  return transport.handleRequest(requestForTransport);
 });
 
 /**
